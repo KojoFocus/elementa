@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^7.4.2",
+    "@prisma/client": "^7.4.2",
     "@supabase/supabase-js": "^2.98.0",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^3.0.3",
@@ -28,15 +30,13 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
-    "@neondatabase/serverless": "^1.0.2",
-    "@prisma/client": "^7.4.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-    "prisma": "^6.19.2",
+    "prisma": "^7.4.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
