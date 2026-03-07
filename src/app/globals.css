@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
+/* ─── Design tokens ────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:       #080c10;
+  --surface:  #0d1520;
+  --surface2: #111c28;
+  --border:   rgba(99,196,255,0.12);
+  --border2:  rgba(99,196,255,0.22);
+
+  --accent:   #4fd1ff;
+  --accent2:  #7affb2;
+  --accent3:  #ff7eb3;
+  --accent-glow: rgba(79,209,255,0.18);
+
+  --success:  #7affb2;
+  --warning:  #f59e0b;
+  --danger:   #ff7eb3;
+
+  --text:     #e8f4ff;
+  --muted:    #5a7a99;
+  --muted2:   #3d5a70;
+
+  --font-heading: var(--font-syne);
+  --font-body:    var(--font-dm-mono);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-syne);
+  --font-mono: var(--font-dm-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─── Base ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: dark; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), 'DM Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), 'Syne', sans-serif;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: rgba(79,209,255,0.3); border-radius: 2px; }
+
+/* ─── Selection ─────────────────────────────────────────────── */
+::selection { background: rgba(79,209,255,0.2); color: #fff; }
+
+/* ─── Utilities ─────────────────────────────────────────────── */
+
+.glass {
+  background: rgba(13,21,32,0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+}
+
+.glass-dark {
+  background: rgba(8,12,16,0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+}
+
+.glow-accent {
+  box-shadow: 0 0 24px rgba(79,209,255,0.2), 0 0 64px rgba(79,209,255,0.06);
+}
+
+.glow-success {
+  box-shadow: 0 0 24px rgba(122,255,178,0.25);
+}
+
+.glow-text {
+  text-shadow: 0 0 24px rgba(79,209,255,0.5);
+}
+
+.lab-grid {
+  background-image:
+    linear-gradient(rgba(79,209,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,209,255,0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.025) 2px,
+    rgba(0,0,0,0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.5s ease forwards; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(79,209,255,0.15); }
+  50%       { box-shadow: 0 0 28px rgba(79,209,255,0.35); }
+}
+.border-pulse { animation: pulse-glow 3s ease-in-out infinite; }
+
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+.animate-float { animation: float 4s ease-in-out infinite; }

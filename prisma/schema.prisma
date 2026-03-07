@@ -1,0 +1,120 @@
+// ============================================================
+//  Elementa — Prisma Schema (Prisma 7 + Neon / PostgreSQL)
+// ============================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // url is supplied via prisma.config.ts → DATABASE_URL env var
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ENUMS
+// ─────────────────────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+enum Subject {
+  CHEMISTRY
+  BIOLOGY
+  PHYSICS
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// ─────────────────────────────────────────────────────────────
+//  USER
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String?
+  role      Role     @default(STUDENT)
+  school    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts  Attempt[]
+
+  @@index([email])
+  @@index([role])
+}
+
+// ─────────────────────────────────────────────────────────────
+//  EXPERIMENT
+// ─────────────────────────────────────────────────────────────
+
+model Experiment {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  title       String
+  subject     Subject
+  description String     @db.Text
+  difficulty  Difficulty @default(BEGINNER)
+  isPublished Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  attempts    Attempt[]
+
+  @@index([slug])
+  @@index([subject])
+  @@index([isPublished])
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ATTEMPT  (one per student lab session)
+// ─────────────────────────────────────────────────────────────
+
+model Attempt {
+  id               String      @id @default(cuid())
+  userId           String
+  experimentId     String
+  startedAt        DateTime    @default(now())
+  completedAt      DateTime?
+  safetyScore      Int?        // 0–100
+  experimentScore  Int?        // 0–100
+  quizScore        Int?        // 0–100
+  totalScore       Int?        // weighted composite 0–100
+  passed           Boolean?
+
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experiment       Experiment  @relation(fields: [experimentId], references: [id], onDelete: Cascade)
+  quizAnswers      QuizAnswer[]
+
+  @@index([userId])
+  @@index([experimentId])
+  @@index([userId, experimentId])
+  @@index([completedAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+//  QUIZ ANSWER  (one row per question per attempt)
+// ─────────────────────────────────────────────────────────────
+
+model QuizAnswer {
+  id          String   @id @default(cuid())
+  attemptId   String
+  questionId  String   // matches ExperimentStep/quiz question id
+  answer      String   // the option id the student selected (e.g. "a")
+  isCorrect   Boolean
+  createdAt   DateTime @default(now())
+
+  attempt     Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId])
+  @@index([questionId])
+}
