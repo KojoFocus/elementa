@@ -19,6 +19,13 @@ export const authConfig: NextAuthConfig = {
         pathname === '/register' ||
         pathname.startsWith('/api/auth');
       if (isPublic) return true;
+      // Return 401 JSON for API routes instead of redirecting to the login page
+      if (!isLoggedIn && pathname.startsWith('/api/')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
       return isLoggedIn;
     },
     jwt({ token, user }) {
