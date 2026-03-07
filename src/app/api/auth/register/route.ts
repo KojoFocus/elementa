@@ -30,7 +30,12 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: 'Server error. Please try again.' }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[register] error:', e);
+    return NextResponse.json(
+      { error: process.env.NODE_ENV === 'development' ? msg : 'Server error. Please try again.' },
+      { status: 500 }
+    );
   }
 }
