@@ -416,7 +416,6 @@ export default function HeatingSaltsPage() {
                 </AnimatePresence>
 
                 <motion.button
-                  onClick={heatingDone ? (isLastStage ? undefined : nextStage) : startHeat}
                   className="w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"
                   style={{
                     background: heating ? 'rgba(245,158,11,0.08)' : heatingDone && isLastStage ? 'rgba(122,255,178,0.1)' : 'rgba(245,158,11,0.12)',
