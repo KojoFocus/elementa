@@ -1,15 +1,16 @@
 import { PrismaClient } from '../generated/prisma/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
+import { PrismaNeonHttp } from '@prisma/adapter-neon';
 
 // ─────────────────────────────────────────────────────────────
 //  Singleton — safe for Next.js dev hot reload
-//  In production a new instance is created once per process.
-//  In development the instance is cached on `globalThis` so
-//  HMR doesn't create hundreds of open connections.
+//  Uses the Neon HTTP adapter (recommended for Next.js serverless).
 // ─────────────────────────────────────────────────────────────
 
 function createPrismaClient() {
-  const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error('DATABASE_URL environment variable is not set');
+  // Second arg is optional at runtime but required in the type definition
+  const adapter = new (PrismaNeonHttp as any)(connectionString) as PrismaNeonHttp;
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
